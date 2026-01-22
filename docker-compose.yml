@@ -1,0 +1,131 @@
+version: '3.8'
+
+networks:
+  api_network:
+    driver: bridge
+
+services:
+  api:
+    build: .
+    container_name: sentiment_api
+    command: python api.py
+    ports:
+      - "8000:8000"
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  auth_test:
+    build: .
+    container_name: auth_test_container
+    command: python auth_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  authz_test:
+    build: .
+    container_name: authz_test_container
+    command: python authz_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  content_test:
+    build: .
+    container_name: content_test_container
+    command: python content_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  performance_test:
+    build: .
+    container_name: performance_test_container
+    command: python performance_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  edge_case_test:
+    build: .
+    container_name: edge_case_test_container
+    command: python edge_case_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  error_handling_test:
+    build: .
+    container_name: error_handling_test_container
+    command: python error_handling_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  concurrent_test:
+    build: .
+    container_name: concurrent_test_container
+    command: python concurrent_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  input_validation_test:
+    build: .
+    container_name: input_validation_test_container
+    command: python input_validation_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
+
+  response_format_test:
+    build: .
+    container_name: response_format_test_container
+    command: python response_format_test.py
+    networks:
+      - api_network
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      api:
+        condition: service_healthy
